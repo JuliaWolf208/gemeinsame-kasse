@@ -1,0 +1,17 @@
+{
+  "name": "Babe-Kasse",
+  "short_name": "Kasse",
+  "description": "Gemeinsame Bargeld-Kasse für Julia & Christine",
+  "icons": [
+    {
+      "src": "app-icon-babe-kasse.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf8f5",
+  "theme_color": "#1a1714"
+}
