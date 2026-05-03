@@ -185,16 +185,16 @@
   <div class="list-section">
     <div class="list-header">
       <div class="section-label" style="margin:0">Offene Ausgaben</div>
-      <div style="display:flex;gap:8px">
-        <button class="btn-export" onclick="deleteAllEntries()" style="color:#c0392b;border-color:#e8b4b0">Alle löschen</button>
-        <button class="btn-export" onclick="exportCSV()">CSV exportieren</button>
-      </div>
+      <button class="btn-export" onclick="exportCSV()">CSV exportieren</button>
     </div>
     <div id="entriesList"><div class="empty">Noch keine Ausgaben.</div></div>
   </div>
 
   <details class="settled-section" id="settledSection" style="display:none">
-    <summary>Abgerechnete Einträge anzeigen</summary>
+    <summary style="display:flex;justify-content:space-between;align-items:center">
+      <span>Abgerechnete Einträge anzeigen</span>
+      <button class="btn-export" onclick="event.preventDefault();deleteAllSettled()" style="color:#c0392b;border-color:#e8b4b0">Alle löschen</button>
+    </summary>
     <div id="settledList"></div>
   </details>
 
@@ -259,13 +259,12 @@ window.deleteEntry = async function(id) {
   await deleteDoc(doc(db, 'entries', id));
 };
 
-window.deleteAllEntries = async function() {
+window.deleteAllSettled = async function() {
   if (!currentUser) return;
-  const active = entries.filter(e => !e.settled);
-  if (active.length === 0) { alert('Keine offenen Einträge vorhanden.'); return; }
-  if (!confirm(`Alle ${active.length} offenen Einträge wirklich löschen?`)) return;
+  if (settledEntries.length === 0) { alert('Keine abgerechneten Einträge vorhanden.'); return; }
+  if (!confirm(`Alle ${settledEntries.length} abgerechneten Einträge wirklich löschen?`)) return;
   const batch = writeBatch(db);
-  active.forEach(e => batch.delete(doc(db, 'entries', e.id)));
+  settledEntries.forEach(e => batch.delete(doc(db, 'entries', e.id)));
   await batch.commit();
 };
 
