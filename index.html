@@ -362,6 +362,7 @@ function render() {
           <div class="entry-meta">${e.person === 'julia' ? 'Julia' : 'Christine'} &middot; ${esc(e.cat)} &middot; ${fmtDate(e.date)}</div>
         </div>
         <div class="entry-amount ${e.person === 'julia' ? 'j' : 'c'}">${fmt(e.amount)}</div>
+        <button class="btn-del" onclick="deleteEntry('${e.id}')" title="Löschen">✕</button>
       </div>`).join('');
   } else {
     settledSec.style.display = 'none';
