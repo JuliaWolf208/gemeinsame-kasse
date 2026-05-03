@@ -79,9 +79,9 @@
   .ptbtn.j-active { background: var(--julia-bg); border-color: var(--julia); color: var(--julia); }
   .ptbtn.c-active { background: var(--christine-bg); border-color: var(--christine); color: var(--christine); }
   .form-row { display: flex; gap: 10px; margin-bottom: 10px; }
-  .fg { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 100px; }
+  .fg { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
   .fg label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 500; }
-  .fg input, .fg select { border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 11px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.15s; width: 100%; }
+  .fg input, .fg select { border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 11px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.15s; width: 100%; box-sizing: border-box; min-width: 0; }
   .fg input:focus, .fg select:focus { border-color: var(--text); }
   .btn-add { width: 100%; padding: 12px; background: var(--text); color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: background 0.2s; margin-top: 4px; }
   .btn-add:hover { background: #333; }
