@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Babe–Kasse</title>
+<link rel="apple-touch-icon" href="app-icon-babe-kasse.jpg">
+<link rel="icon" type="image/jpeg" href="app-icon-babe-kasse.jpg">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf8f5;
+    --surface: #ffffff;
+    --border: #e8e2d9;
+    --text: #1a1714;
+    --muted: #8a8076;
+    --julia: #1a5276;
+    --julia-bg: #eef5fb;
+    --julia-border: #aed6f1;
+    --christine: #b03a2e;
+    --christine-bg: #fdf2f1;
+    --christine-border: #e8b4b0;
+    --green: #1e6b3a;
+    --green-bg: #eafaf1;
+    --green-border: #a9dfbf;
+    --shadow: 0 2px 14px rgba(0,0,0,0.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+  header {
+    background: var(--text);
+    color: white;
+    padding: 22px 20px 18px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  header h1 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 2px; }
+  header p { font-size: 0.7rem; color: #aaa; letter-spacing: 0.1em; text-transform: uppercase; }
+  .container { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+  .balance-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin: 20px 0 16px;
+    box-shadow: var(--shadow);
+  }
+  .section-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 14px; font-weight: 500; }
+  .balance-row { display: flex; gap: 10px; margin-bottom: 16px; }
+  .bal-box { flex: 1; border-radius: 12px; padding: 14px 12px; text-align: center; }
+  .bal-box.j { background: var(--julia-bg); border: 1.5px solid var(--julia-border); }
+  .bal-box.c { background: var(--christine-bg); border: 1.5px solid var(--christine-border); }
+  .bal-name { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; margin-bottom: 5px; }
+  .bal-box.j .bal-name { color: var(--julia); }
+  .bal-box.c .bal-name { color: var(--christine); }
+  .bal-amount { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; }
+  .settlement { border-radius: 10px; padding: 13px 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .settlement.owe { background: var(--green-bg); border: 1.5px solid var(--green-border); }
+  .settlement.even { background: #f5f5f0; border: 1.5px solid #ddd; }
+  .s-label { font-size: 0.82rem; color: var(--green); font-weight: 500; }
+  .settlement.even .s-label { color: var(--muted); }
+  .s-amount { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--green); }
+  .settlement.even .s-amount { color: var(--muted); }
+  .btn-settle { margin-top: 12px; width: 100%; padding: 12px; background: var(--text); color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+  .btn-settle:hover { background: #333; }
+  .btn-settle:disabled { background: #ccc; cursor: default; }
+  .add-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+  .person-toggle { display: flex; gap: 8px; margin-bottom: 12px; }
+  .ptbtn { flex: 1; padding: 10px 8px; border: 1.5px solid var(--border); border-radius: 8px; background: var(--bg); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; color: var(--muted); transition: all 0.15s; }
+  .ptbtn.j-active { background: var(--julia-bg); border-color: var(--julia); color: var(--julia); }
+  .ptbtn.c-active { background: var(--christine-bg); border-color: var(--christine); color: var(--christine); }
+  .form-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .fg { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 100px; }
+  .fg label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 500; }
+  .fg input, .fg select { border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 11px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.15s; width: 100%; }
+  .fg input:focus, .fg select:focus { border-color: var(--text); }
+  .btn-add { width: 100%; padding: 12px; background: var(--text); color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: background 0.2s; margin-top: 4px; }
+  .btn-add:hover { background: #333; }
+  .list-section { margin-bottom: 20px; }
+  .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .btn-export { font-size: 0.75rem; padding: 5px 12px; background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-family: 'DM Sans', sans-serif; color: var(--muted); transition: all 0.15s; }
+  .btn-export:hover { border-color: var(--text); color: var(--text); }
+  .entry { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 13px 15px; margin-bottom: 7px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow); }
+  .entry-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .entry-dot.j { background: var(--julia); }
+  .entry-dot.c { background: var(--christine); }
+  .entry-info { flex: 1; min-width: 0; }
+  .entry-desc { font-size: 0.9rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .entry-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+  .entry-amount { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; white-space: nowrap; }
+  .entry-amount.j { color: var(--julia); }
+  .entry-amount.c { color: var(--christine); }
+  .btn-del { background: none; border: none; cursor: pointer; color: #ccc; font-size: 1rem; padding: 2px 4px; transition: color 0.15s; line-height: 1; }
+  .btn-del:hover { color: #e74c3c; }
+  .empty { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 30px 0; }
+  .status-bar { text-align: center; font-size: 0.72rem; color: var(--muted); margin: 8px 0 16px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; display: inline-block; }
+  .status-dot.ok { background: #27ae60; }
+  .settled-section { margin-top: 8px; margin-bottom: 20px; }
+  .settled-section summary { cursor: pointer; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 10px; user-select: none; display: block; padding: 4px 0; }
+  .entry.settled { opacity: 0.5; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Julia &amp; Christine</h1>
+  <p>Gemeinsame Kasse</p>
+</header>
+
+<div class="container">
+
+  <div class="status-bar">
+    <span class="status-dot ok" id="statusDot"></span>
+    <span id="statusText">Lokal gespeichert</span>
+  </div>
+
+  <div class="balance-card">
+    <div class="section-label">Aktuelle Bilanz</div>
+    <div class="balance-row">
+      <div class="bal-box j">
+        <div class="bal-name">Julia</div>
+        <div class="bal-amount" id="juliaTotal">0,00 €</div>
+      </div>
+      <div class="bal-box c">
+        <div class="bal-name">Christine</div>
+        <div class="bal-amount" id="christineTotal">0,00 €</div>
+      </div>
+    </div>
+    <div class="settlement even" id="settlementBox">
+      <span class="s-label" id="settlementLabel">Quitt – alles ausgeglichen</span>
+      <span class="s-amount" id="settlementAmount"></span>
+    </div>
+    <button class="btn-settle" id="btnSettle" onclick="settle()" disabled>Abrechnung durchführen</button>
+  </div>
+
+  <div class="add-card">
+    <div class="section-label">Ausgabe eintragen</div>
+    <div class="person-toggle">
+      <button class="ptbtn j-active" id="btnJulia" onclick="selectPerson('julia')">Julia</button>
+      <button class="ptbtn" id="btnChristine" onclick="selectPerson('christine')">Christine</button>
+    </div>
+    <div class="form-row">
+      <div class="fg" style="flex:2">
+        <label>Beschreibung</label>
+        <input type="text" id="inDesc" placeholder="z.B. Supermarkt" />
+      </div>
+      <div class="fg" style="flex:1">
+        <label>Betrag (€)</label>
+        <input type="number" id="inAmount" placeholder="0.00" step="0.01" min="0" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg" style="flex:2; min-width:0">
+        <label>Datum</label>
+        <input type="date" id="inDate" />
+      </div>
+      <div class="fg" style="flex:1; min-width:0">
+        <label>Kategorie</label>
+        <select id="inCat">
+          <option value="Sonstiges">Sonstiges</option>
+          <option value="Lebensmittel">Lebensmittel</option>
+          <option value="Tanken">Tanken</option>
+          <option value="Restaurant">Restaurant</option>
+          <option value="Haushalt">Haushalt</option>
+          <option value="Freizeit">Freizeit</option>
+          <option value="Gesundheit">Gesundheit</option>
+          <option value="Reise">Reise</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-add" onclick="addEntry()">+ Eintragen</button>
+  </div>
+
+  <div class="list-section">
+    <div class="list-header">
+      <div class="section-label" style="margin:0">Offene Ausgaben</div>
+      <button class="btn-export" onclick="exportCSV()">CSV exportieren</button>
+    </div>
+    <div id="entriesList"><div class="empty">Noch keine Ausgaben.</div></div>
+  </div>
+
+  <details class="settled-section" id="settledSection" style="display:none">
+    <summary>Abgerechnete Einträge anzeigen</summary>
+    <div id="settledList"></div>
+  </details>
+
+</div>
+
+<script>
+const STORAGE_KEY = 'kasse_entries';
+
+let selectedPerson = 'julia';
+let entries = [];
+
+document.getElementById('inDate').valueAsDate = new Date();
+
+function load() {
+  try {
+    entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  } catch(e) {
+    entries = [];
+  }
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+function selectPerson(p) {
+  selectedPerson = p;
+  document.getElementById('btnJulia').className = 'ptbtn' + (p === 'julia' ? ' j-active' : '');
+  document.getElementById('btnChristine').className = 'ptbtn' + (p === 'christine' ? ' c-active' : '');
+}
+
+function addEntry() {
+  const desc = document.getElementById('inDesc').value.trim();
+  const amount = parseFloat(document.getElementById('inAmount').value);
+  const date = document.getElementById('inDate').value;
+  const cat = document.getElementById('inCat').value;
+  if (!desc || isNaN(amount) || amount <= 0 || !date) { alert('Bitte alle Felder ausfüllen.'); return; }
+  entries.push({
+    id: Date.now().toString(),
+    person: selectedPerson,
+    desc,
+    amount,
+    date,
+    cat,
+    settled: false,
+    createdAt: Date.now()
+  });
+  save();
+  render();
+  document.getElementById('inDesc').value = '';
+  document.getElementById('inAmount').value = '';
+  document.getElementById('inDate').valueAsDate = new Date();
+  document.getElementById('inCat').value = 'Sonstiges';
+}
+
+function deleteEntry(id) {
+  if (!confirm('Eintrag löschen?')) return;
+  entries = entries.filter(e => e.id !== id);
+  save();
+  render();
+}
+
+function settle() {
+  const active = entries.filter(e => !e.settled);
+  if (active.length === 0) return;
+  if (!confirm('Abrechnung jetzt durchführen? Alle offenen Ausgaben werden als abgerechnet markiert.')) return;
+  entries = entries.map(e => e.settled ? e : { ...e, settled: true, settledAt: Date.now() });
+  save();
+  render();
+}
+
+function exportCSV() {
+  if (entries.length === 0) { alert('Keine Daten zum Exportieren.'); return; }
+  const rows = [['Datum','Person','Beschreibung','Kategorie','Betrag','Abgerechnet']];
+  entries.forEach(e => rows.push([e.date, e.person === 'julia' ? 'Julia' : 'Christine', e.desc, e.cat, e.amount.toFixed(2), e.settled ? 'Ja' : 'Nein']));
+  const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',')).join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'kasse_export.csv';
+  a.click();
+}
+
+function fmt(n) {
+  return n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function fmtDate(d) {
+  const [y,m,day] = d.split('-');
+  return `${day}.${m}.${y}`;
+}
+
+function render() {
+  const active = entries.filter(e => !e.settled);
+  const settledEntries = entries.filter(e => e.settled);
+  const juliaSum = active.filter(e => e.person === 'julia').reduce((s,e) => s + e.amount, 0);
+  const christineSum = active.filter(e => e.person === 'christine').reduce((s,e) => s + e.amount, 0);
+
+  document.getElementById('juliaTotal').textContent = fmt(juliaSum);
+  document.getElementById('christineTotal').textContent = fmt(christineSum);
+
+  const diff = juliaSum - christineSum;
+  const box = document.getElementById('settlementBox');
+  const lbl = document.getElementById('settlementLabel');
+  const amt = document.getElementById('settlementAmount');
+  const btn = document.getElementById('btnSettle');
+
+  if (Math.abs(diff) < 0.01) {
+    box.className = 'settlement even';
+    lbl.textContent = 'Quitt – alles ausgeglichen';
+    amt.textContent = '';
+    btn.disabled = true;
+  } else {
+    box.className = 'settlement owe';
+    const who = diff > 0 ? 'Christine' : 'Julia';
+    lbl.textContent = `${who} zahlt auf gemeinsames Konto:`;
+    amt.textContent = fmt(Math.abs(diff));
+    btn.disabled = false;
+  }
+
+  const sorted = [...active].sort((a,b) => b.date.localeCompare(a.date));
+  const list = document.getElementById('entriesList');
+  list.innerHTML = sorted.length === 0
+    ? '<div class="empty">Keine offenen Ausgaben.</div>'
+    : sorted.map(e => `
+      <div class="entry">
+        <div class="entry-dot ${e.person === 'julia' ? 'j' : 'c'}"></div>
+        <div class="entry-info">
+          <div class="entry-desc">${esc(e.desc)}</div>
+          <div class="entry-meta">${e.person === 'julia' ? 'Julia' : 'Christine'} &middot; ${esc(e.cat)} &middot; ${fmtDate(e.date)}</div>
+        </div>
+        <div class="entry-amount ${e.person === 'julia' ? 'j' : 'c'}">${fmt(e.amount)}</div>
+        <button class="btn-del" onclick="deleteEntry('${e.id}')" title="Löschen">✕</button>
+      </div>`).join('');
+
+  const settledSec = document.getElementById('settledSection');
+  if (settledEntries.length > 0) {
+    settledSec.style.display = '';
+    const sortedS = [...settledEntries].sort((a,b) => b.date.localeCompare(a.date));
+    document.getElementById('settledList').innerHTML = sortedS.map(e => `
+      <div class="entry settled">
+        <div class="entry-dot ${e.person === 'julia' ? 'j' : 'c'}"></div>
+        <div class="entry-info">
+          <div class="entry-desc">${esc(e.desc)}</div>
+          <div class="entry-meta">${e.person === 'julia' ? 'Julia' : 'Christine'} &middot; ${esc(e.cat)} &middot; ${fmtDate(e.date)}</div>
+        </div>
+        <div class="entry-amount ${e.person === 'julia' ? 'j' : 'c'}">${fmt(e.amount)}</div>
+      </div>`).join('');
+  } else {
+    settledSec.style.display = 'none';
+  }
+}
+
+load();
+render();
+</script>
+</body>
+</html>
