@@ -64,11 +64,16 @@
   .bal-box.c .bal-name { color: var(--christine); }
   .bal-amount { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; }
   .settlement { border-radius: 10px; padding: 13px 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-  .settlement.owe { background: var(--green-bg); border: 1.5px solid var(--green-border); }
+  .settlement.owe-j { background: var(--julia-bg); border: 1.5px solid var(--julia-border); }
+  .settlement.owe-c { background: var(--christine-bg); border: 1.5px solid var(--christine-border); }
   .settlement.even { background: #f5f5f0; border: 1.5px solid #ddd; }
-  .s-label { font-size: 0.82rem; color: var(--green); font-weight: 500; }
+  .s-label { font-size: 0.82rem; font-weight: 500; }
+  .settlement.owe-j .s-label { color: var(--julia); }
+  .settlement.owe-c .s-label { color: var(--christine); }
   .settlement.even .s-label { color: var(--muted); }
-  .s-amount { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--green); }
+  .s-amount { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; }
+  .settlement.owe-j .s-amount { color: var(--julia); }
+  .settlement.owe-c .s-amount { color: var(--christine); }
   .settlement.even .s-amount { color: var(--muted); }
   .btn-settle { margin-top: 12px; width: 100%; padding: 12px; background: var(--text); color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
   .btn-settle:hover { background: #333; }
@@ -308,8 +313,8 @@ function render() {
     amt.textContent = '';
     btn.disabled = true;
   } else {
-    box.className = 'settlement owe';
     const who = diff > 0 ? 'Christine' : 'Julia';
+    box.className = 'settlement ' + (diff > 0 ? 'owe-c' : 'owe-j');
     lbl.textContent = `${who} zahlt auf gemeinsames Konto:`;
     amt.textContent = fmt(Math.abs(diff));
     btn.disabled = false;
