@@ -10,7 +10,8 @@
       "purpose": "any maskable"
     }
   ],
-  "start_url": "/",
+  "start_url": "/babe-kasse/",
+  "scope": "/babe-kasse/",
   "display": "standalone",
   "background_color": "#faf8f5",
   "theme_color": "#1a1714"
