@@ -134,6 +134,31 @@
   .modal-actions { display: flex; gap: 10px; margin-top: 14px; }
   .btn-modal-ok { flex: 1; padding: 11px; background: var(--text); color: white; border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500; cursor: pointer; }
   .btn-modal-cancel { flex: 1; padding: 11px; background: transparent; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: var(--muted); cursor: pointer; }
+  .tab-bar { display: flex; gap: 6px; margin-top: 14px; max-width: 640px; margin-left: auto; margin-right: auto; padding: 0 16px; }
+  .tab-btn { flex: 1; padding: 9px 10px; background: transparent; border: 1px solid #444; border-radius: 8px; color: #bbb; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+  .tab-btn.active { background: white; color: var(--text); border-color: white; }
+  .view { display: none; }
+  .view.active { display: block; }
+  .shop-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 7px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow); }
+  .shop-check { width: 24px; height: 24px; border: 2px solid var(--border); border-radius: 6px; background: var(--bg); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0; transition: all 0.15s; }
+  .shop-check.done.j { background: var(--julia); border-color: var(--julia); }
+  .shop-check.done.c { background: var(--christine); border-color: var(--christine); }
+  .shop-check svg { width: 14px; height: 14px; color: white; display: none; }
+  .shop-check.done svg { display: block; }
+  .shop-info { flex: 1; min-width: 0; }
+  .shop-name { font-size: 0.95rem; font-weight: 500; word-wrap: break-word; }
+  .shop-meta { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+  .shop-meta.j { color: var(--julia); }
+  .shop-meta.c { color: var(--christine); }
+  .shop-item.done .shop-name { text-decoration: line-through; color: var(--muted); }
+  .shop-input-row { display: flex; gap: 8px; }
+  .shop-input-row input { flex: 1; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.15s; min-width: 0; }
+  .shop-input-row input:focus { border-color: var(--text); }
+  .btn-shop-add { padding: 10px 16px; background: var(--text); color: white; border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; cursor: pointer; white-space: nowrap; }
+  .btn-shop-add:disabled { background: #ccc; cursor: default; }
+  .who-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .who-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 500; }
+  .who-toggle { display: flex; gap: 6px; flex: 1; min-width: 180px; }
 </style>
 </head>
 <body>
@@ -141,6 +166,10 @@
 <header>
   <h1>Julia &amp; Christine</h1>
   <p>Gemeinsame Kasse</p>
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tabKasse" onclick="selectView('kasse')">Kasse</button>
+    <button class="tab-btn" id="tabShop" onclick="selectView('shop')">Einkaufsliste</button>
+  </div>
 </header>
 
 <div class="container">
@@ -149,6 +178,8 @@
     <span class="status-dot loading" id="statusDot"></span>
     <span id="statusText">Verbinde…</span>
   </div>
+
+  <div class="view active" id="viewKasse">
 
   <div class="balance-card">
     <div class="section-label">Aktuelle Bilanz</div>
@@ -228,6 +259,42 @@
     <button class="btn-io" onclick="openImport()">↑ Importieren</button>
   </div>
 
+  </div>
+
+  <div class="view" id="viewShop">
+
+    <div class="add-card">
+      <div class="section-label">Einkauf hinzufügen</div>
+      <div class="who-row">
+        <span class="who-label">Ich bin</span>
+        <div class="who-toggle">
+          <button class="ptbtn j-active" id="whoJulia" onclick="selectWho('julia')">Julia</button>
+          <button class="ptbtn" id="whoChristine" onclick="selectWho('christine')">Christine</button>
+        </div>
+      </div>
+      <div class="shop-input-row">
+        <input type="text" id="shopInput" placeholder="z.B. Milch, Brot, Tomaten…" />
+        <button class="btn-shop-add" id="btnShopAdd" onclick="addShopItem()" disabled>+ Hinzufügen</button>
+      </div>
+    </div>
+
+    <div class="list-section">
+      <div class="list-header">
+        <div class="section-label" style="margin:0">Offene Einkäufe</div>
+      </div>
+      <div id="shopOpenList"><div class="empty">Noch keine Einkäufe.</div></div>
+    </div>
+
+    <details class="settled-section" id="shopDoneSection" style="display:none">
+      <summary style="display:flex;justify-content:space-between;align-items:center">
+        <span>Erledigte Einkäufe anzeigen</span>
+        <button class="btn-export" onclick="event.preventDefault();deleteAllDoneShop()" style="color:#c0392b;border-color:#e8b4b0">Alle löschen</button>
+      </summary>
+      <div id="shopDoneList"></div>
+    </details>
+
+  </div>
+
 </div>
 
 <div class="modal-overlay" id="importModal" style="display:none" onclick="if(event.target===this)closeImport()">
@@ -259,7 +326,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, query, orderBy, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, query, orderBy, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCF3sEuL_z2onz4eYdQWVeE3VeVZiOtQwA",
@@ -278,6 +345,9 @@ let selectedPerson = 'julia';
 let entries = [];
 let settledEntries = [];
 let currentUser = null;
+let shopItems = [];
+let shopDoneItems = [];
+let whoAmI = localStorage.getItem('whoAmI') || 'julia';
 
 document.getElementById('inDate').valueAsDate = new Date();
 
@@ -290,6 +360,69 @@ window.selectPerson = function(p) {
   selectedPerson = p;
   document.getElementById('btnJulia').className = 'ptbtn' + (p === 'julia' ? ' j-active' : '');
   document.getElementById('btnChristine').className = 'ptbtn' + (p === 'christine' ? ' c-active' : '');
+};
+
+window.selectView = function(v) {
+  document.getElementById('viewKasse').className = 'view' + (v === 'kasse' ? ' active' : '');
+  document.getElementById('viewShop').className = 'view' + (v === 'shop' ? ' active' : '');
+  document.getElementById('tabKasse').className = 'tab-btn' + (v === 'kasse' ? ' active' : '');
+  document.getElementById('tabShop').className = 'tab-btn' + (v === 'shop' ? ' active' : '');
+};
+
+window.selectWho = function(p) {
+  whoAmI = p;
+  localStorage.setItem('whoAmI', p);
+  updateWhoButtons();
+};
+
+function updateWhoButtons() {
+  document.getElementById('whoJulia').className = 'ptbtn' + (whoAmI === 'julia' ? ' j-active' : '');
+  document.getElementById('whoChristine').className = 'ptbtn' + (whoAmI === 'christine' ? ' c-active' : '');
+}
+updateWhoButtons();
+
+window.addShopItem = async function() {
+  if (!currentUser) { alert('Noch nicht angemeldet. Bitte kurz warten.'); return; }
+  const input = document.getElementById('shopInput');
+  const name = input.value.trim();
+  if (!name) return;
+  try {
+    await addDoc(collection(db, 'shopping'), {
+      name,
+      addedBy: whoAmI,
+      done: false,
+      doneBy: null,
+      doneAt: null,
+      createdAt: serverTimestamp()
+    });
+    input.value = '';
+    input.focus();
+  } catch(e) { alert('Fehler: ' + e.message); }
+};
+
+window.toggleShopItem = async function(id, currentlyDone) {
+  if (!currentUser) return;
+  const ref = doc(db, 'shopping', id);
+  if (currentlyDone) {
+    await updateDoc(ref, { done: false, doneBy: null, doneAt: null });
+  } else {
+    await updateDoc(ref, { done: true, doneBy: whoAmI, doneAt: serverTimestamp() });
+  }
+};
+
+window.deleteShopItem = async function(id) {
+  if (!currentUser) return;
+  if (!confirm('Eintrag löschen?')) return;
+  await deleteDoc(doc(db, 'shopping', id));
+};
+
+window.deleteAllDoneShop = async function() {
+  if (!currentUser) return;
+  if (shopDoneItems.length === 0) { alert('Keine erledigten Einkäufe vorhanden.'); return; }
+  if (!confirm(`Alle ${shopDoneItems.length} erledigten Einkäufe wirklich löschen?`)) return;
+  const batch = writeBatch(db);
+  shopDoneItems.forEach(i => batch.delete(doc(db, 'shopping', i.id)));
+  await batch.commit();
 };
 
 window.addEntry = async function() {
@@ -504,6 +637,59 @@ function render() {
   }
 }
 
+function renderShop() {
+  const open = [...shopItems].sort((a,b) => {
+    const ta = a.createdAt?.seconds || 0;
+    const tb = b.createdAt?.seconds || 0;
+    return ta - tb;
+  });
+  const openList = document.getElementById('shopOpenList');
+  openList.innerHTML = open.length === 0
+    ? '<div class="empty">Noch keine Einkäufe.</div>'
+    : open.map(i => {
+        const addedName = i.addedBy === 'julia' ? 'Julia' : 'Christine';
+        const addedCls = i.addedBy === 'julia' ? 'j' : 'c';
+        return `
+        <div class="shop-item">
+          <button class="shop-check" onclick="toggleShopItem('${i.id}', false)" title="Abhaken">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+          <div class="shop-info">
+            <div class="shop-name">${esc(i.name)}</div>
+            <div class="shop-meta ${addedCls}">Hinzugefügt von ${addedName}</div>
+          </div>
+          <button class="btn-del" onclick="deleteShopItem('${i.id}')" title="Löschen">✕</button>
+        </div>`;
+      }).join('');
+
+  const doneSec = document.getElementById('shopDoneSection');
+  if (shopDoneItems.length > 0) {
+    doneSec.style.display = '';
+    const doneSorted = [...shopDoneItems].sort((a,b) => {
+      const ta = a.doneAt?.seconds || 0;
+      const tb = b.doneAt?.seconds || 0;
+      return tb - ta;
+    });
+    document.getElementById('shopDoneList').innerHTML = doneSorted.map(i => {
+      const doneName = i.doneBy === 'julia' ? 'Julia' : 'Christine';
+      const doneCls = i.doneBy === 'julia' ? 'j' : 'c';
+      return `
+      <div class="shop-item done">
+        <button class="shop-check done ${doneCls}" onclick="toggleShopItem('${i.id}', true)" title="Wiederherstellen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <div class="shop-info">
+          <div class="shop-name">${esc(i.name)}</div>
+          <div class="shop-meta ${doneCls}">Erledigt von ${doneName}</div>
+        </div>
+        <button class="btn-del" onclick="deleteShopItem('${i.id}')" title="Löschen">✕</button>
+      </div>`;
+    }).join('');
+  } else {
+    doneSec.style.display = 'none';
+  }
+}
+
 function startFirestore() {
   const q = query(collection(db, 'entries'), orderBy('createdAt', 'desc'));
   onSnapshot(q, snap => {
@@ -516,6 +702,20 @@ function startFirestore() {
     });
     render();
     setStatus('ok', 'Synchronisiert');
+  }, err => {
+    setStatus('', 'Verbindungsfehler – ' + err.message);
+  });
+
+  const qShop = query(collection(db, 'shopping'), orderBy('createdAt', 'desc'));
+  onSnapshot(qShop, snap => {
+    shopItems = [];
+    shopDoneItems = [];
+    snap.forEach(d => {
+      const data = { id: d.id, ...d.data() };
+      if (data.done) shopDoneItems.push(data);
+      else shopItems.push(data);
+    });
+    renderShop();
   }, err => {
     setStatus('', 'Verbindungsfehler – ' + err.message);
   });
@@ -537,14 +737,20 @@ onAuthStateChanged(auth, user => {
   if (user) {
     currentUser = user;
     document.getElementById('btnAdd').disabled = false;
+    document.getElementById('btnShopAdd').disabled = false;
     startFirestore();
   } else {
     currentUser = null;
     document.getElementById('btnAdd').disabled = true;
+    document.getElementById('btnShopAdd').disabled = true;
     signInAnonymously(auth).catch(err => {
       setStatus('', 'Anmeldung fehlgeschlagen – ' + err.message);
     });
   }
+});
+
+document.getElementById('shopInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); window.addShopItem(); }
 });
 </script>
 </body>
