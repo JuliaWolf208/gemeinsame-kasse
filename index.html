@@ -483,6 +483,12 @@ function startFirestore() {
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/babe-kasse/sw.js').catch(() => {});
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (reloaded) return;
+    reloaded = true;
+    location.reload();
+  });
 }
 
 setStatus('loading', 'Verbinde…');
