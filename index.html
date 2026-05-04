@@ -87,7 +87,7 @@
   .ptbtn.j-active { background: var(--julia-bg); border-color: var(--julia); color: var(--julia); }
   .ptbtn.c-active { background: var(--christine-bg); border-color: var(--christine); color: var(--christine); }
   .form-row { display: grid; gap: 10px; margin-bottom: 10px; grid-template-columns: 2fr 1fr; }
-  .form-row.full { grid-template-columns: 1fr; }
+  .form-row.even { grid-template-columns: 1fr 1fr; }
   .fg { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
   .fg label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 500; }
   .fg input, .fg select { border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 11px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.15s; width: 100%; box-sizing: border-box; min-width: 0; }
@@ -183,13 +183,11 @@
         <input type="number" id="inAmount" placeholder="0.00" step="0.01" min="0" />
       </div>
     </div>
-    <div class="form-row full">
+    <div class="form-row even">
       <div class="fg">
         <label>Datum</label>
         <input type="date" id="inDate" />
       </div>
-    </div>
-    <div class="form-row full">
       <div class="fg">
         <label>Kategorie</label>
         <select id="inCat">
