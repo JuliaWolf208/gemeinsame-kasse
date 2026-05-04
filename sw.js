@@ -1,5 +1,5 @@
 // Service Worker – immer neueste Version vom Netzwerk laden
-const CACHE = 'babe-kasse-v1';
+const CACHE = 'babe-kasse-v7';
 
 self.addEventListener('install', () => self.skipWaiting());
 

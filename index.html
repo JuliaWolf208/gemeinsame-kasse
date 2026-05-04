@@ -86,10 +86,14 @@
   .ptbtn { flex: 1; padding: 10px 8px; border: 1.5px solid var(--border); border-radius: 8px; background: var(--bg); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; color: var(--muted); transition: all 0.15s; }
   .ptbtn.j-active { background: var(--julia-bg); border-color: var(--julia); color: var(--julia); }
   .ptbtn.c-active { background: var(--christine-bg); border-color: var(--christine); color: var(--christine); }
-  .form-row { display: flex; gap: 10px; margin-bottom: 10px; }
-  .fg { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+  .form-row { display: grid; gap: 10px; margin-bottom: 10px; grid-template-columns: 2fr 1fr; }
+  .form-row.even { grid-template-columns: 1fr 1fr; }
+  .fg { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
   .fg label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 500; }
   .fg input, .fg select { border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 11px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.15s; width: 100%; box-sizing: border-box; min-width: 0; }
+  .fg input[type="date"] { -webkit-appearance: none; appearance: none; text-align: left; }
+  .fg input[type="date"]::-webkit-datetime-edit { text-align: left; }
+  .fg input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   .fg input:focus, .fg select:focus { border-color: var(--text); }
   .btn-add { width: 100%; padding: 12px; background: var(--text); color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: background 0.2s; margin-top: 4px; }
   .btn-add:hover { background: #333; }
@@ -130,13 +134,76 @@
   .modal-actions { display: flex; gap: 10px; margin-top: 14px; }
   .btn-modal-ok { flex: 1; padding: 11px; background: var(--text); color: white; border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500; cursor: pointer; }
   .btn-modal-cancel { flex: 1; padding: 11px; background: transparent; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: var(--muted); cursor: pointer; }
+  .tab-bar { display: flex; gap: 6px; margin-top: 14px; max-width: 640px; margin-left: auto; margin-right: auto; padding: 0 16px; }
+  .tab-btn { flex: 1; padding: 9px 10px; background: transparent; border: 1px solid #444; border-radius: 8px; color: #bbb; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+  .tab-btn.active { background: white; color: var(--text); border-color: white; }
+  .view { display: none; }
+  .view.active { display: block; }
+  .shop-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 7px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow); }
+  .shop-check { width: 24px; height: 24px; border: 2px solid var(--border); border-radius: 6px; background: var(--bg); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0; transition: all 0.15s; }
+  .shop-check.done.j { background: var(--julia); border-color: var(--julia); }
+  .shop-check.done.c { background: var(--christine); border-color: var(--christine); }
+  .shop-check svg { width: 14px; height: 14px; color: white; display: none; }
+  .shop-check.done svg { display: block; }
+  .shop-info { flex: 1; min-width: 0; }
+  .shop-name { font-size: 0.95rem; font-weight: 500; word-wrap: break-word; }
+  .shop-meta { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+  .shop-meta.j { color: var(--julia); }
+  .shop-meta.c { color: var(--christine); }
+  .shop-item.done .shop-name { text-decoration: line-through; color: var(--muted); }
+  .shop-input-row { display: flex; gap: 8px; }
+  .shop-input-row input { flex: 1; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.15s; min-width: 0; }
+  .shop-input-row input:focus { border-color: var(--text); }
+  .btn-shop-add { padding: 10px 16px; background: var(--text); color: white; border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; cursor: pointer; white-space: nowrap; }
+  .btn-shop-add:disabled { background: #ccc; cursor: default; }
+  .who-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .who-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 500; }
+  .who-toggle { display: flex; gap: 6px; flex: 1; min-width: 180px; }
+  #loginScreen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+  .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 32px 28px; width: 100%; max-width: 360px; box-shadow: var(--shadow); }
+  .login-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; text-align: center; margin-bottom: 4px; }
+  .login-sub { font-size: 0.72rem; color: var(--muted); text-align: center; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px; }
+  .login-fg { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+  .login-fg label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 500; }
+  .login-fg input { border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.15s; width: 100%; box-sizing: border-box; }
+  .login-fg input:focus { border-color: var(--text); }
+  .btn-login { width: 100%; padding: 13px; background: var(--text); color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 500; cursor: pointer; margin-top: 8px; transition: background 0.2s; }
+  .btn-login:hover { background: #333; }
+  .btn-login:disabled { background: #888; cursor: default; }
+  .login-error { font-size: 0.82rem; color: #c0392b; margin-top: 10px; min-height: 18px; text-align: center; }
+  .btn-logout { background: none; border: 1px solid #555; color: #ccc; font-size: 0.7rem; cursor: pointer; padding: 5px 10px; font-family: 'DM Sans', sans-serif; letter-spacing: 0.05em; border-radius: 6px; position: absolute; top: 16px; right: 16px; transition: all 0.15s; }
+  .btn-logout:hover { color: white; border-color: white; }
 </style>
 </head>
 <body>
 
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-title">Babe-Kasse</div>
+    <div class="login-sub">Julia &amp; Christine</div>
+    <div class="login-fg">
+      <label>E-Mail</label>
+      <input type="email" id="loginEmail" placeholder="deine@email.de" autocomplete="email" />
+    </div>
+    <div class="login-fg">
+      <label>Passwort</label>
+      <input type="password" id="loginPassword" placeholder="Passwort" autocomplete="current-password" />
+    </div>
+    <button class="btn-login" id="btnLogin" onclick="login()">Anmelden</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<div id="mainApp" style="display:none">
+
 <header>
   <h1>Julia &amp; Christine</h1>
   <p>Gemeinsame Kasse</p>
+  <button class="btn-logout" onclick="logout()" id="btnLogout">Abmelden</button>
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tabKasse" onclick="selectView('kasse')">Kasse</button>
+    <button class="tab-btn" id="tabShop" onclick="selectView('shop')">Einkaufsliste</button>
+  </div>
 </header>
 
 <div class="container">
@@ -145,6 +212,8 @@
     <span class="status-dot loading" id="statusDot"></span>
     <span id="statusText">Verbinde…</span>
   </div>
+
+  <div class="view active" id="viewKasse">
 
   <div class="balance-card">
     <div class="section-label">Aktuelle Bilanz</div>
@@ -172,21 +241,21 @@
       <button class="ptbtn" id="btnChristine" onclick="selectPerson('christine')">Christine</button>
     </div>
     <div class="form-row">
-      <div class="fg" style="flex:2">
+      <div class="fg">
         <label>Beschreibung</label>
         <input type="text" id="inDesc" placeholder="z.B. Supermarkt" />
       </div>
-      <div class="fg" style="flex:1">
+      <div class="fg">
         <label>Betrag (€)</label>
         <input type="number" id="inAmount" placeholder="0.00" step="0.01" min="0" />
       </div>
     </div>
-    <div class="form-row">
-      <div class="fg" style="flex:1; min-width:0">
+    <div class="form-row even">
+      <div class="fg">
         <label>Datum</label>
         <input type="date" id="inDate" />
       </div>
-      <div class="fg" style="flex:2; min-width:0">
+      <div class="fg">
         <label>Kategorie</label>
         <select id="inCat">
           <option value="Sonstiges">Sonstiges</option>
@@ -224,12 +293,48 @@
     <button class="btn-io" onclick="openImport()">↑ Importieren</button>
   </div>
 
+  </div>
+
+  <div class="view" id="viewShop">
+
+    <div class="add-card">
+      <div class="section-label">Einkauf hinzufügen</div>
+      <div class="who-row">
+        <span class="who-label">Ich bin</span>
+        <div class="who-toggle">
+          <button class="ptbtn j-active" id="whoJulia" onclick="selectWho('julia')">Julia</button>
+          <button class="ptbtn" id="whoChristine" onclick="selectWho('christine')">Christine</button>
+        </div>
+      </div>
+      <div class="shop-input-row">
+        <input type="text" id="shopInput" placeholder="z.B. Milch, Brot, Tomaten…" />
+        <button class="btn-shop-add" id="btnShopAdd" onclick="addShopItem()" disabled>+ Hinzufügen</button>
+      </div>
+    </div>
+
+    <div class="list-section">
+      <div class="list-header">
+        <div class="section-label" style="margin:0">Offene Einkäufe</div>
+      </div>
+      <div id="shopOpenList"><div class="empty">Noch keine Einkäufe.</div></div>
+    </div>
+
+    <details class="settled-section" id="shopDoneSection" style="display:none">
+      <summary style="display:flex;justify-content:space-between;align-items:center">
+        <span>Erledigte Einkäufe anzeigen</span>
+        <button class="btn-export" onclick="event.preventDefault();deleteAllDoneShop()" style="color:#c0392b;border-color:#e8b4b0">Alle löschen</button>
+      </summary>
+      <div id="shopDoneList"></div>
+    </details>
+
+  </div>
+
 </div>
 
 <div class="modal-overlay" id="importModal" style="display:none" onclick="if(event.target===this)closeImport()">
   <div class="modal-box">
     <div class="modal-title">Daten importieren</div>
-    <div class="modal-sub">Füge den Inhalt einer exportierten .txt-Datei ein.</div>
+    <div class="modal-sub">Füge den Inhalt eines Export-Texts ein.</div>
     <textarea class="modal-ta" id="importTa" rows="10" placeholder="Export-Text hier einfügen…"></textarea>
     <div class="modal-msg" id="importMsg"></div>
     <div class="modal-actions">
@@ -239,10 +344,25 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="exportModal" style="display:none" onclick="if(event.target===this)closeExport()">
+  <div class="modal-box">
+    <div class="modal-title">Daten exportieren</div>
+    <div class="modal-sub">Tippe „Kopieren" oder markiere den Text und füge ihn in deine Notizen ein.</div>
+    <textarea class="modal-ta" id="exportTa" rows="12" readonly></textarea>
+    <div class="modal-msg" id="exportMsg"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeExport()">Schließen</button>
+      <button class="btn-modal-ok" onclick="copyExport()">Kopieren</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, query, orderBy, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, query, orderBy, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCF3sEuL_z2onz4eYdQWVeE3VeVZiOtQwA",
@@ -261,6 +381,9 @@ let selectedPerson = 'julia';
 let entries = [];
 let settledEntries = [];
 let currentUser = null;
+let shopItems = [];
+let shopDoneItems = [];
+let whoAmI = localStorage.getItem('whoAmI') || 'julia';
 
 document.getElementById('inDate').valueAsDate = new Date();
 
@@ -273,6 +396,69 @@ window.selectPerson = function(p) {
   selectedPerson = p;
   document.getElementById('btnJulia').className = 'ptbtn' + (p === 'julia' ? ' j-active' : '');
   document.getElementById('btnChristine').className = 'ptbtn' + (p === 'christine' ? ' c-active' : '');
+};
+
+window.selectView = function(v) {
+  document.getElementById('viewKasse').className = 'view' + (v === 'kasse' ? ' active' : '');
+  document.getElementById('viewShop').className = 'view' + (v === 'shop' ? ' active' : '');
+  document.getElementById('tabKasse').className = 'tab-btn' + (v === 'kasse' ? ' active' : '');
+  document.getElementById('tabShop').className = 'tab-btn' + (v === 'shop' ? ' active' : '');
+};
+
+window.selectWho = function(p) {
+  whoAmI = p;
+  localStorage.setItem('whoAmI', p);
+  updateWhoButtons();
+};
+
+function updateWhoButtons() {
+  document.getElementById('whoJulia').className = 'ptbtn' + (whoAmI === 'julia' ? ' j-active' : '');
+  document.getElementById('whoChristine').className = 'ptbtn' + (whoAmI === 'christine' ? ' c-active' : '');
+}
+updateWhoButtons();
+
+window.addShopItem = async function() {
+  if (!currentUser) { alert('Noch nicht angemeldet. Bitte kurz warten.'); return; }
+  const input = document.getElementById('shopInput');
+  const name = input.value.trim();
+  if (!name) return;
+  try {
+    await addDoc(collection(db, 'shopping'), {
+      name,
+      addedBy: whoAmI,
+      done: false,
+      doneBy: null,
+      doneAt: null,
+      createdAt: serverTimestamp()
+    });
+    input.value = '';
+    input.focus();
+  } catch(e) { alert('Fehler: ' + e.message); }
+};
+
+window.toggleShopItem = async function(id, currentlyDone) {
+  if (!currentUser) return;
+  const ref = doc(db, 'shopping', id);
+  if (currentlyDone) {
+    await updateDoc(ref, { done: false, doneBy: null, doneAt: null });
+  } else {
+    await updateDoc(ref, { done: true, doneBy: whoAmI, doneAt: serverTimestamp() });
+  }
+};
+
+window.deleteShopItem = async function(id) {
+  if (!currentUser) return;
+  if (!confirm('Eintrag löschen?')) return;
+  await deleteDoc(doc(db, 'shopping', id));
+};
+
+window.deleteAllDoneShop = async function() {
+  if (!currentUser) return;
+  if (shopDoneItems.length === 0) { alert('Keine erledigten Einkäufe vorhanden.'); return; }
+  if (!confirm(`Alle ${shopDoneItems.length} erledigten Einkäufe wirklich löschen?`)) return;
+  const batch = writeBatch(db);
+  shopDoneItems.forEach(i => batch.delete(doc(db, 'shopping', i.id)));
+  await batch.commit();
 };
 
 window.addEntry = async function() {
@@ -332,11 +518,34 @@ window.exportTxt = function() {
   all.sort((a,b) => b.date.localeCompare(a.date)).forEach(e => {
     lines.push(`${e.date}|${e.person}|${e.desc}|${e.cat}|${e.amount.toFixed(2)}|${e.settled ? 'ja' : 'nein'}`);
   });
-  const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8;' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `kasse_export_${new Date().toISOString().slice(0,10)}.txt`;
-  a.click();
+  document.getElementById('exportTa').value = lines.join('\n');
+  document.getElementById('exportMsg').textContent = '';
+  document.getElementById('exportModal').style.display = 'flex';
+};
+
+window.closeExport = function() {
+  document.getElementById('exportModal').style.display = 'none';
+};
+
+window.copyExport = async function() {
+  const ta = document.getElementById('exportTa');
+  const msg = document.getElementById('exportMsg');
+  try {
+    await navigator.clipboard.writeText(ta.value);
+    msg.style.color = '#1e6b3a';
+    msg.textContent = '✓ In Zwischenablage kopiert';
+  } catch(e) {
+    ta.focus();
+    ta.select();
+    try {
+      document.execCommand('copy');
+      msg.style.color = '#1e6b3a';
+      msg.textContent = '✓ Kopiert – jetzt in Notizen einfügen';
+    } catch(_) {
+      msg.style.color = '#c0392b';
+      msg.textContent = 'Bitte Text manuell markieren und kopieren.';
+    }
+  }
 };
 
 window.openImport = function() {
@@ -464,6 +673,59 @@ function render() {
   }
 }
 
+function renderShop() {
+  const open = [...shopItems].sort((a,b) => {
+    const ta = a.createdAt?.seconds || 0;
+    const tb = b.createdAt?.seconds || 0;
+    return ta - tb;
+  });
+  const openList = document.getElementById('shopOpenList');
+  openList.innerHTML = open.length === 0
+    ? '<div class="empty">Noch keine Einkäufe.</div>'
+    : open.map(i => {
+        const addedName = i.addedBy === 'julia' ? 'Julia' : 'Christine';
+        const addedCls = i.addedBy === 'julia' ? 'j' : 'c';
+        return `
+        <div class="shop-item">
+          <button class="shop-check" onclick="toggleShopItem('${i.id}', false)" title="Abhaken">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+          <div class="shop-info">
+            <div class="shop-name">${esc(i.name)}</div>
+            <div class="shop-meta ${addedCls}">Hinzugefügt von ${addedName}</div>
+          </div>
+          <button class="btn-del" onclick="deleteShopItem('${i.id}')" title="Löschen">✕</button>
+        </div>`;
+      }).join('');
+
+  const doneSec = document.getElementById('shopDoneSection');
+  if (shopDoneItems.length > 0) {
+    doneSec.style.display = '';
+    const doneSorted = [...shopDoneItems].sort((a,b) => {
+      const ta = a.doneAt?.seconds || 0;
+      const tb = b.doneAt?.seconds || 0;
+      return tb - ta;
+    });
+    document.getElementById('shopDoneList').innerHTML = doneSorted.map(i => {
+      const doneName = i.doneBy === 'julia' ? 'Julia' : 'Christine';
+      const doneCls = i.doneBy === 'julia' ? 'j' : 'c';
+      return `
+      <div class="shop-item done">
+        <button class="shop-check done ${doneCls}" onclick="toggleShopItem('${i.id}', true)" title="Wiederherstellen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <div class="shop-info">
+          <div class="shop-name">${esc(i.name)}</div>
+          <div class="shop-meta ${doneCls}">Erledigt von ${doneName}</div>
+        </div>
+        <button class="btn-del" onclick="deleteShopItem('${i.id}')" title="Löschen">✕</button>
+      </div>`;
+    }).join('');
+  } else {
+    doneSec.style.display = 'none';
+  }
+}
+
 function startFirestore() {
   const q = query(collection(db, 'entries'), orderBy('createdAt', 'desc'));
   onSnapshot(q, snap => {
@@ -479,26 +741,104 @@ function startFirestore() {
   }, err => {
     setStatus('', 'Verbindungsfehler – ' + err.message);
   });
+
+  const qShop = query(collection(db, 'shopping'), orderBy('createdAt', 'desc'));
+  onSnapshot(qShop, snap => {
+    shopItems = [];
+    shopDoneItems = [];
+    snap.forEach(d => {
+      const data = { id: d.id, ...d.data() };
+      if (data.done) shopDoneItems.push(data);
+      else shopItems.push(data);
+    });
+    renderShop();
+  }, err => {
+    setStatus('', 'Verbindungsfehler – ' + err.message);
+  });
 }
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/babe-kasse/sw.js').catch(() => {});
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (reloaded) return;
+    reloaded = true;
+    location.reload();
+  });
 }
 
-setStatus('loading', 'Verbinde…');
+window.login = async function() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('btnLogin');
+  errEl.textContent = '';
+  if (!email || !password) {
+    errEl.textContent = 'Bitte E-Mail und Passwort eingeben.';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Anmelden…';
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'Anmelden';
+    if (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found' || e.code === 'auth/invalid-email') {
+      errEl.textContent = 'E-Mail oder Passwort falsch.';
+    } else if (e.code === 'auth/too-many-requests') {
+      errEl.textContent = 'Zu viele Versuche. Bitte kurz warten.';
+    } else if (e.code === 'auth/network-request-failed') {
+      errEl.textContent = 'Keine Internetverbindung.';
+    } else {
+      errEl.textContent = 'Fehler: ' + e.message;
+    }
+  }
+};
+
+window.logout = async function() {
+  if (!confirm('Wirklich abmelden?')) return;
+  await signOut(auth);
+};
+
+let firestoreStarted = false;
 
 onAuthStateChanged(auth, user => {
   if (user) {
     currentUser = user;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = '';
     document.getElementById('btnAdd').disabled = false;
-    startFirestore();
+    document.getElementById('btnShopAdd').disabled = false;
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginError').textContent = '';
+    document.getElementById('btnLogin').disabled = false;
+    document.getElementById('btnLogin').textContent = 'Anmelden';
+    setStatus('loading', 'Verbinde…');
+    if (!firestoreStarted) {
+      firestoreStarted = true;
+      startFirestore();
+    }
   } else {
     currentUser = null;
+    firestoreStarted = false;
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('mainApp').style.display = 'none';
     document.getElementById('btnAdd').disabled = true;
-    signInAnonymously(auth).catch(err => {
-      setStatus('', 'Anmeldung fehlgeschlagen – ' + err.message);
-    });
+    document.getElementById('btnShopAdd').disabled = true;
   }
+});
+
+document.getElementById('shopInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); window.addShopItem(); }
+});
+
+document.getElementById('loginEmail').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); document.getElementById('loginPassword').focus(); }
+});
+
+document.getElementById('loginPassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); window.login(); }
 });
 </script>
 </body>
