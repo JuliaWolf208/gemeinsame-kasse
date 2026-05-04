@@ -159,13 +159,47 @@
   .who-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
   .who-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 500; }
   .who-toggle { display: flex; gap: 6px; flex: 1; min-width: 180px; }
+  #loginScreen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+  .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 32px 28px; width: 100%; max-width: 360px; box-shadow: var(--shadow); }
+  .login-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; text-align: center; margin-bottom: 4px; }
+  .login-sub { font-size: 0.72rem; color: var(--muted); text-align: center; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px; }
+  .login-fg { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+  .login-fg label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 500; }
+  .login-fg input { border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.15s; width: 100%; box-sizing: border-box; }
+  .login-fg input:focus { border-color: var(--text); }
+  .btn-login { width: 100%; padding: 13px; background: var(--text); color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 500; cursor: pointer; margin-top: 8px; transition: background 0.2s; }
+  .btn-login:hover { background: #333; }
+  .btn-login:disabled { background: #888; cursor: default; }
+  .login-error { font-size: 0.82rem; color: #c0392b; margin-top: 10px; min-height: 18px; text-align: center; }
+  .btn-logout { background: none; border: 1px solid #555; color: #ccc; font-size: 0.7rem; cursor: pointer; padding: 5px 10px; font-family: 'DM Sans', sans-serif; letter-spacing: 0.05em; border-radius: 6px; position: absolute; top: 16px; right: 16px; transition: all 0.15s; }
+  .btn-logout:hover { color: white; border-color: white; }
 </style>
 </head>
 <body>
 
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-title">Babe-Kasse</div>
+    <div class="login-sub">Julia &amp; Christine</div>
+    <div class="login-fg">
+      <label>E-Mail</label>
+      <input type="email" id="loginEmail" placeholder="deine@email.de" autocomplete="email" />
+    </div>
+    <div class="login-fg">
+      <label>Passwort</label>
+      <input type="password" id="loginPassword" placeholder="Passwort" autocomplete="current-password" />
+    </div>
+    <button class="btn-login" id="btnLogin" onclick="login()">Anmelden</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<div id="mainApp" style="display:none">
+
 <header>
   <h1>Julia &amp; Christine</h1>
   <p>Gemeinsame Kasse</p>
+  <button class="btn-logout" onclick="logout()" id="btnLogout">Abmelden</button>
   <div class="tab-bar">
     <button class="tab-btn active" id="tabKasse" onclick="selectView('kasse')">Kasse</button>
     <button class="tab-btn" id="tabShop" onclick="selectView('shop')">Einkaufsliste</button>
@@ -323,9 +357,11 @@
   </div>
 </div>
 
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, query, orderBy, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -731,26 +767,78 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-setStatus('loading', 'Verbinde…');
+window.login = async function() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('btnLogin');
+  errEl.textContent = '';
+  if (!email || !password) {
+    errEl.textContent = 'Bitte E-Mail und Passwort eingeben.';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Anmelden…';
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'Anmelden';
+    if (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found' || e.code === 'auth/invalid-email') {
+      errEl.textContent = 'E-Mail oder Passwort falsch.';
+    } else if (e.code === 'auth/too-many-requests') {
+      errEl.textContent = 'Zu viele Versuche. Bitte kurz warten.';
+    } else if (e.code === 'auth/network-request-failed') {
+      errEl.textContent = 'Keine Internetverbindung.';
+    } else {
+      errEl.textContent = 'Fehler: ' + e.message;
+    }
+  }
+};
+
+window.logout = async function() {
+  if (!confirm('Wirklich abmelden?')) return;
+  await signOut(auth);
+};
+
+let firestoreStarted = false;
 
 onAuthStateChanged(auth, user => {
   if (user) {
     currentUser = user;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = '';
     document.getElementById('btnAdd').disabled = false;
     document.getElementById('btnShopAdd').disabled = false;
-    startFirestore();
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginError').textContent = '';
+    document.getElementById('btnLogin').disabled = false;
+    document.getElementById('btnLogin').textContent = 'Anmelden';
+    setStatus('loading', 'Verbinde…');
+    if (!firestoreStarted) {
+      firestoreStarted = true;
+      startFirestore();
+    }
   } else {
     currentUser = null;
+    firestoreStarted = false;
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('mainApp').style.display = 'none';
     document.getElementById('btnAdd').disabled = true;
     document.getElementById('btnShopAdd').disabled = true;
-    signInAnonymously(auth).catch(err => {
-      setStatus('', 'Anmeldung fehlgeschlagen – ' + err.message);
-    });
   }
 });
 
 document.getElementById('shopInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') { e.preventDefault(); window.addShopItem(); }
+});
+
+document.getElementById('loginEmail').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); document.getElementById('loginPassword').focus(); }
+});
+
+document.getElementById('loginPassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); window.login(); }
 });
 </script>
 </body>
