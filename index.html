@@ -407,6 +407,7 @@ window.selectView = function(v) {
   document.getElementById('viewShop').className = 'view' + (v === 'shop' ? ' active' : '');
   document.getElementById('tabKasse').className = 'tab-btn' + (v === 'kasse' ? ' active' : '');
   document.getElementById('tabShop').className = 'tab-btn' + (v === 'shop' ? ' active' : '');
+  localStorage.setItem('activeTab', v);
 };
 
 window.selectWho = function(p) {
@@ -818,6 +819,7 @@ onAuthStateChanged(auth, user => {
     document.getElementById('loginError').textContent = '';
     document.getElementById('btnLogin').disabled = false;
     document.getElementById('btnLogin').textContent = 'Anmelden';
+    selectView(localStorage.getItem('activeTab') || 'kasse');
     setStatus('loading', 'Verbinde…');
     if (!firestoreStarted) {
       firestoreStarted = true;
